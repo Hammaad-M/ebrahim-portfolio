@@ -1,0 +1,364 @@
+@import 'tailwindcss';
+
+@theme {
+  /* --- Pastel apothecary palette ------------------------------------- */
+  --color-bg-primary: #f7f4ec;   /* warm paper */
+  --color-bg-secondary: #fffdf7; /* raised card surface */
+  --color-ink: #33413b;          /* soft pine-charcoal text */
+  --color-ivory: #33413b;        /* remap: primary text = ink (legacy class name) */
+  --color-muted: #5c6a62;        /* readable muted body text */
+  --color-faint: #8b988f;        /* decorative labels only */
+
+  --color-copper: #e2914d;       /* kept primary accent */
+  --color-teal: #2f8a78;         /* readable sage-teal for labels (legacy name) */
+  --color-sage: #7fb79e;         /* pastel fill */
+  --color-sky: #9dbbd9;          /* pastel fill */
+  --color-lilac: #c3aedd;        /* pastel fill */
+  --color-butter: #f0ce86;       /* pastel fill */
+  --color-peach: #f3c29e;        /* pastel fill */
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  background-color: #f7f4ec;
+  /* soft pastel washes + faint grain over warm paper */
+  background-image:
+    radial-gradient(58% 44% at 12% 0%, rgba(243, 194, 158, 0.4) 0%, transparent 62%),
+    radial-gradient(52% 42% at 100% 22%, rgba(157, 187, 217, 0.32) 0%, transparent 60%),
+    radial-gradient(60% 50% at 88% 100%, rgba(127, 183, 158, 0.34) 0%, transparent 64%),
+    radial-gradient(46% 40% at 0% 82%, rgba(195, 174, 221, 0.3) 0%, transparent 62%);
+  background-attachment: fixed;
+}
+
+/* faint riso-style grain, sits above the washes */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+::selection {
+  background: rgba(226, 145, 77, 0.28);
+  color: var(--color-ink);
+}
+
+/* Visible keyboard focus, tuned to the palette */
+:focus-visible {
+  outline: 2px solid var(--color-copper);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* --- Burette flow-line: liquid rising + bubbles ---------------------- */
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-120px) translateX(3px);
+    opacity: 0;
+  }
+}
+
+.flow-bubble {
+  animation: bubble-rise 3.4s linear infinite;
+}
+
+/* legacy name kept for FlowLine: shimmering liquid surface */
+@keyframes stream-flow {
+  from {
+    background-position-y: 0;
+  }
+  to {
+    background-position-y: 26px;
+  }
+}
+
+.flow-dashes {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.55) 0 3px,
+    transparent 3px 26px
+  );
+  animation: stream-flow 2.6s linear infinite;
+}
+
+/* Flowing dashed ring on the process wheel */
+@keyframes wheel-dash-flow {
+  to {
+    stroke-dashoffset: -84;
+  }
+}
+
+.wheel-dash {
+  animation: wheel-dash-flow 3.6s linear infinite;
+}
+
+/* --- Ambient motion for the chemistry sprites ----------------------- */
+
+/* Material moving along a dashed SVG line (signal / vapor path) */
+@keyframes stroke-flow {
+  to {
+    stroke-dashoffset: -80;
+  }
+}
+
+.stroke-flow {
+  animation: stroke-flow 3s linear infinite;
+}
+
+/* Slow continuous rotation (molecules, stir rings, orbits).
+   transform-box makes px transform-origins resolve in viewBox units on SVG. */
+@keyframes spin-kf {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-kf 70s linear infinite;
+  transform-box: view-box;
+}
+
+.spin-slow-rev {
+  animation: spin-kf 90s linear infinite reverse;
+  transform-box: view-box;
+}
+
+.spin-med {
+  animation: spin-kf 16s linear infinite;
+  transform-box: view-box;
+}
+
+.spin-orbit {
+  animation: spin-kf 9s linear infinite;
+  transform-box: view-box;
+}
+
+/* Gentle floating bob for sprites drifting in the margins */
+@keyframes float-bob-kf {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--tilt, 0deg));
+  }
+  50% {
+    transform: translateY(-14px) rotate(calc(var(--tilt, 0deg) * -1));
+  }
+}
+
+.float-bob {
+  animation: float-bob-kf 7s ease-in-out infinite;
+}
+
+/* Liquid surface sway inside glassware */
+@keyframes liquid-sway-kf {
+  0%,
+  100% {
+    transform: rotate(-1.4deg);
+  }
+  50% {
+    transform: rotate(1.4deg);
+  }
+}
+
+.liquid-sway {
+  animation: liquid-sway-kf 5s ease-in-out infinite;
+  transform-box: view-box;
+}
+
+/* Rising bubbles inside a flask (SVG) */
+@keyframes rise-kf {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-46px);
+    opacity: 0;
+  }
+}
+
+.rise {
+  animation: rise-kf 3.2s ease-in infinite;
+  transform-box: view-box;
+}
+
+/* Soft flame flicker on a burner */
+@keyframes flame-kf {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scaleY(1.12) scaleX(0.94);
+    opacity: 1;
+  }
+}
+
+.flame {
+  animation: flame-kf 1.4s ease-in-out infinite;
+  transform-box: view-box;
+}
+
+/* Droplet falling from a pipette */
+@keyframes drip-kf {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(40px) scale(1);
+    opacity: 0;
+  }
+}
+
+.drip {
+  animation: drip-kf 2.6s ease-in infinite;
+  transform-box: view-box;
+}
+
+/* Smoke / steam puffs rising from a stack or cooling tower */
+@keyframes smoke-kf {
+  0% {
+    transform: translateY(0) scale(0.55);
+    opacity: 0;
+  }
+  22% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateY(-52px) scale(1.35);
+    opacity: 0;
+  }
+}
+
+.smoke {
+  animation: smoke-kf 4.4s ease-out infinite;
+  transform-box: view-box;
+}
+
+/* Pressure-gauge needle hunting around its setpoint */
+@keyframes gauge-sweep-kf {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(22deg);
+  }
+}
+
+.gauge-sweep {
+  animation: gauge-sweep-kf 6s ease-in-out infinite;
+  transform-box: view-box;
+}
+
+/* Breathing opacity for indicator dots / vapor */
+@keyframes pulse-soft-kf {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.pulse-soft {
+  animation: pulse-soft-kf 3.8s ease-in-out infinite;
+}
+
+/* One-shot ripple when a section's droplet node activates */
+@keyframes node-ping-kf {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.node-ping {
+  animation: node-ping-kf 0.9s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  body::before {
+    opacity: 0.32;
+  }
+  .flow-bubble,
+  .flow-dashes,
+  .wheel-dash,
+  .stroke-flow,
+  .spin-slow,
+  .spin-slow-rev,
+  .spin-med,
+  .spin-orbit,
+  .float-bob,
+  .liquid-sway,
+  .rise,
+  .flame,
+  .drip,
+  .smoke,
+  .gauge-sweep,
+  .pulse-soft,
+  .node-ping {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
